@@ -1,0 +1,54 @@
+#!/bin/bash
+# Script para extraer informacion del sistema.
+# La informacion se manda a la salida estandar. 
+# Necesario ejecutar con privilegios de administracion (con sudo o como root).
+
+echo '<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>'
+echo "<host>"
+echo "  <hostname>"
+echo "          $HOSTNAME"
+echo "  </hostname>"
+echo "  <hosts>"
+echo "<![CDATA["
+cat /etc/hosts
+echo "]]>"
+echo "  </hosts>"
+echo "  <dns>"
+echo "<![CDATA["
+cat /etc/resolv.conf
+echo "]]>"
+echo "  </dns>"
+echo "  <netplan>"
+echo "<![CDATA["
+cat /etc/netplan/*.yaml
+echo "]]>"
+echo "  </netplan>"
+echo "  <particionamiento>"
+echo "<![CDATA["
+fdisk -l
+echo "]]>"
+echo "  </particionamiento>"
+echo "  <ram>"
+cat /proc/meminfo | grep MemTotal
+echo "  </ram>"
+echo "  <usuario>"
+cat /etc/passwd | grep administrador
+echo "  </usuario>"
+echo "  <sudo>"
+cat /etc/group | grep -w sudo
+echo "  </sudo>"
+echo "  <vmwaretools>"
+ps aux | grep vmtoolsd | grep -v "grep"
+echo "  </vmwaretools>"
+echo "  <antivirus>"
+service clamav-freshclam  status
+echo "  </antivirus>"
+echo "  <ssh>"
+service ssh status
+echo "  </ssh>"
+echo "  <repositorios>"
+echo "<![CDATA["
+tail -n 3 /etc/apt/sources.list 
+echo "]]>"
+echo "  </repositorios>"
+echo "</host>"
